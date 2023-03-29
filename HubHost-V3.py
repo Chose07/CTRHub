@@ -1,20 +1,10 @@
-# 3.0
+# V4
 
 import os
 import psutil
 import socket
 import winreg
-from pymongo import MongoClient
-
-cluster = "mongodb://python:49180007@localhost:27017/?authMechanism=DEFAULT"
-try:
-    client = MongoClient(cluster)
-except:
-    print("Error")
-    exit()
-
-hub_database = client.CTRHub
-user_check_db = hub_database.user_check
+import updaterHost
 
 
 def get_installed_software():
@@ -117,8 +107,7 @@ with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows NT\C
 installed_software = get_installed_software()
 
 # Write results to database
-user_check_db.replace_one({"user": computer_name}, {
-                          "user": computer_name, "data": []}, upsert=True)
+updaterHost.replace_the_database(computer_name)
 
 # Write results to file
 user_data = [
@@ -133,5 +122,4 @@ user_data = [
 ] + [f"{s['name']},{s['version']},{s['publisher']}"
      for s in installed_software]
 
-user_check_db.update_one({"user": computer_name}, {
-                         "$push": {"data": user_data}})
+updaterHost.write_to_database(computer_name, user_data)
