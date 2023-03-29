@@ -1,10 +1,13 @@
-# V4
+# 4
 
 import os
 import psutil
 import socket
 import winreg
 import updaterHost
+
+current_version = 4
+updaterHost.update_program(current_version)
 
 
 def get_installed_software():
