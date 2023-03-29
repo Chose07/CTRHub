@@ -1,15 +1,11 @@
 # 4
-
 import os
 import psutil
 import socket
 import winreg
 import updaterHost
-
 current_version = 4
 updaterHost.update_program(current_version)
-
-
 def get_installed_software():
     def filter_name(name):
         name = name.replace(" (x64)", "").replace(
@@ -17,7 +13,6 @@ def get_installed_software():
         name = name.replace(" x86", "").replace(" X64", "").replace(" X86", "")
         name = name.replace(" (64-bit)", "").split(" - ", 1)[0].strip()
         return name
-
     def find_duplicates(software_list):
         unique_software = []
         duplicates = []
@@ -27,7 +22,6 @@ def get_installed_software():
             else:
                 duplicates.append(s)
         return unique_software, duplicates
-
     software_list = []
     keys = [winreg.HKEY_LOCAL_MACHINE, winreg.HKEY_CURRENT_USER]
     flags = [winreg.KEY_WOW64_32KEY, winreg.KEY_WOW64_64KEY]
@@ -55,14 +49,11 @@ def get_installed_software():
                         pass
             except:
                 pass
-
     unique_software, duplicates = find_duplicates(software_list)
     # If there are duplicates, print them and remove them from the list
     if duplicates:
         software_list = unique_software
     return software_list
-
-
 # Check ESET
 eset_active = any("egui.exe" in proc.name().lower(
 ) or "ekrn.exe" in proc.name().lower() for proc in psutil.process_iter())
@@ -93,7 +84,6 @@ try:
         i += 1
 except WindowsError:
     pass
-
 if len(office_versions) > 0:
     office_version = str(max(office_versions))
 else:
@@ -105,13 +95,10 @@ admin_rights = os.access(os.sep.join(
 computer_name = socket.gethostname()
 with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows NT\CurrentVersion") as key:
     windows_version = winreg.QueryValueEx(key, "EditionID")[0]
-
 # Get list of installed software
 installed_software = get_installed_software()
-
 # Write results to database
 updaterHost.replace_the_database(computer_name)
-
 # Write results to file
 user_data = [
     f"ESET,{eset_active}",
@@ -124,5 +111,4 @@ user_data = [
     f"NAME,{computer_name}",
 ] + [f"{s['name']},{s['version']},{s['publisher']}"
      for s in installed_software]
-
 updaterHost.write_to_database(computer_name, user_data)
