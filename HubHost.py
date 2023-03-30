@@ -105,7 +105,7 @@ def get_installed_software():
 
 def main():
 
-    current_version = 4
+    current_version = 5
 
     updaterHost.update_program(current_version)
 
